@@ -1,0 +1,43 @@
+CREATE TABLE `${tableName}` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `target_ip` varchar(100) NOT NULL DEFAULT '' COMMENT 'run ip',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT 'task name',
+  `status` int(11) NOT NULL DEFAULT '0' COMMENT 'status',
+  `config` varchar(255) DEFAULT NULL COMMENT 'bean config',
+  `last_target_ip` varchar(100) DEFAULT '' COMMENT 'last run ip',
+  `last_start_time` datetime DEFAULT NULL COMMENT 'last start time',
+  `last_end_time` datetime DEFAULT NULL COMMENT 'last end time',
+  `create_time` datetime NOT NULL COMMENT 'create time',
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'update time',
+  `category1` varchar(255) DEFAULT NULL COMMENT 'category',
+  `priority` int(11) DEFAULT '0' COMMENT 'pool',
+  `app_name` varchar(100) DEFAULT NULL COMMENT 'app name',
+  `cron_type` int(11) NOT NULL DEFAULT '0' COMMENT 'cron_type',
+  `category2` varchar(255) DEFAULT NULL COMMENT 'category',
+  `category3` varchar(255) DEFAULT NULL COMMENT 'category',
+  `category4` varchar(255) DEFAULT NULL COMMENT 'category',
+  `user_id` bigint(20) unsigned DEFAULT NULL COMMENT 'user_id',
+  `cron` varchar(100) DEFAULT NULL COMMENT 'cron express',
+  `task_type` int(11) NOT NULL DEFAULT '0' COMMENT 'custom task type',
+  `task_config` mediumtext COMMENT 'task extras config',
+  `log_level` varchar(10) DEFAULT NULL COMMENT 'log level',
+  `mon_flag` smallint(6) NOT NULL DEFAULT '0' COMMENT '0:no  1:yes',
+  `mon_config` varchar(100) DEFAULT NULL COMMENT 'monitor config',
+  `create_user` varchar(100) DEFAULT NULL COMMENT 'creator',
+  `oper_time` datetime DEFAULT NULL COMMENT 'operation time',
+  `oper_user` varchar(100) DEFAULT NULL,
+  `task_result` mediumtext COMMENT 'run result',
+  PRIMARY KEY (`id`),
+  KEY `idx_app_update` (`app_name`,`update_time`),
+  KEY `ids_app_id` (`app_name`,`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='time task';
+
+
+-- INSERT INTO `${tableName}` (target_ip,name,status,config,create_time,update_time,category1,app_name,oper_user,oper_time,user_id,cron)
+--values('${ip}','demo',1,'{\"args\":{},\"method\":\"run\",\"stopMethod\":\"\",\"bean\":\"demoPlugin\"}',
+--now(),now(),'default','${appName}','admin',now(),1,'5s');
+
+
+
+
+

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/res/js/vue.min.js"></script>
+</head>
+<body>
+<ul id="example-1">
+    <li v-for="item in items2">
+        <input v-model="item.message" >
+         {{ item.message }}
+    </li>
+    <li><input v-model="obj.e" placeholder="edit me"></li>
+</ul>
+<button onclick="doAdd()">add</button>
+<button onclick="doDel()">del</button>
+<script>
+    var d= {
+        edit:null,
+        obj : { e :'obj.e'},
+        items: [
+            { message: 'Foo' },
+            { message: 'Bar' }
+        ],
+        items2: []
+    };
+    var c={m:"mmm"};
+    var example1 = new Vue({
+        el: '#example-1',
+        data:d
+    })
+    function doAdd() {
+        alert(example1.obj.e);
+        example1.items2.push({message1:'Add New'});
+    }
+
+    function doDel() {
+        example1.items.pop();
+    }
+
+    document.addEventListener('DOMSubtreeModified',function(e){
+        e = e || event;
+        console.log(e.type+"change content")//DOMSubtreeModified
+    });
+</script>
+</body>
+</html>

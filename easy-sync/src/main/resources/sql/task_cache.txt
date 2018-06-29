@@ -1,0 +1,13 @@
+CREATE TABLE `${tableName}` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `main_key` varchar(200) NOT NULL,
+  `sub_key` varchar(200) NOT NULL,
+  `value` varchar(500) DEFAULT NULL,
+  `dataType` int(11) DEFAULT '0',
+  `expire` datetime DEFAULT NULL,
+  `version` bigint(20) DEFAULT '0',
+  `create_time` datetime NOT NULL COMMENT '',
+  `update_time` datetime NOT NULL COMMENT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `${tableName}_keys` (`main_key`,`sub_key`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;

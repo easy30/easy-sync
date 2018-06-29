@@ -1,0 +1,39 @@
+-- mediumtext to varchar
+CREATE TABLE `${tableName}` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `target_ip` varchar(100) NOT NULL DEFAULT '' COMMENT '',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '',
+  `status` int(11) NOT NULL DEFAULT '0' COMMENT '',
+  `config` varchar(255) DEFAULT NULL COMMENT '',
+  `last_target_ip` varchar(100) DEFAULT '' COMMENT '',
+  `last_start_time` datetime DEFAULT NULL COMMENT '',
+  `last_end_time` datetime DEFAULT NULL COMMENT '',
+  `create_time` datetime NOT NULL COMMENT '',
+  `update_time` datetime NOT NULL COMMENT '',
+  `category1` varchar(255) DEFAULT NULL COMMENT '',
+  `priority` int(11) DEFAULT '0' COMMENT '',
+  `app_name` varchar(100) DEFAULT NULL COMMENT '',
+  `cron_type` int(11) NOT NULL DEFAULT '0' COMMENT 'cron_type',
+  `category2` varchar(255) DEFAULT NULL COMMENT '',
+  `category3` varchar(255) DEFAULT NULL COMMENT '',
+  `category4` varchar(255) DEFAULT NULL COMMENT '',
+  `user_id` bigint(20) unsigned DEFAULT NULL COMMENT 'user_id',
+  `cron` varchar(100) DEFAULT NULL COMMENT '',
+  `task_type` int(11) NOT NULL DEFAULT '0' COMMENT '',
+  `task_config` varchar(100000) COMMENT '',
+  `log_level` varchar(10) DEFAULT NULL COMMENT '',
+  `mon_flag` smallint(6) NOT NULL DEFAULT '0' COMMENT '',
+  `mon_config` varchar(100) DEFAULT NULL COMMENT '',
+  `create_user` varchar(100) DEFAULT NULL COMMENT '',
+  `oper_time` datetime DEFAULT NULL COMMENT '',
+  `oper_user` varchar(100) DEFAULT NULL,
+  `task_result` varchar(100000) COMMENT 'run result',
+  PRIMARY KEY (`id`),
+  KEY `idx_${tableName}_au` (`app_name`,`update_time`),
+  KEY `ids_${tableName}_ai` (`app_name`,`id`)
+) COMMENT='time task';
+
+
+
+
+

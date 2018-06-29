@@ -1,0 +1,11 @@
+CREATE TABLE `${tableName}` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `server_id` BIGINT UNSIGNED NOT NULL,
+  `time_task_id` BIGINT NOT NULL,
+  `filename` VARCHAR(255) NULL DEFAULT NULL,
+  `position` BIGINT NULL,
+  `gtid_set` VARCHAR(45) NULL,
+  `create_time` DATETIME NULL,
+  `update_time` DATETIME NULL,
+   PRIMARY KEY (`id`),
+   UNIQUE KEY `${tableName}_keys` (`time_task_id`,`server_id`));

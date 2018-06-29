@@ -1,0 +1,29 @@
+{
+
+  "0":{
+    "desc":"Data Sync",
+    "categoryNames":["分组"],
+    "bean":{
+      "fixed":"1",
+      "bean":"mysqlSyncPlugin",
+      "method":"run",
+      "args":{},
+      "stopMethod":"stop"
+    }
+  },
+  "1":{
+    "desc":"Data Index",
+    "categoryNames":["分组"],
+    "bean":{
+      "fixed":"1",
+      "bean":"esSyncPlugin",
+      "method":"run",
+      "args":{},
+      "stopMethod":"stop"
+    }
+  },
+  "2":{
+    "desc":"task",
+    "categoryNames":["分组"]
+  }
+}

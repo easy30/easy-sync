@@ -1,0 +1,53 @@
+function lang_text2() {/*
+mysqlUrl=mysql 链接
+mysqlHost=mysql主机
+mysqlPort=mysql端口
+mysqlUser=mysql用户
+mysqlPassword=mysql密码
+kafkaServers=Kafka服务器
+kafkaVersion=Kafka版本
+config=配置
+mysqlTasks=Binlog
+elasticsearchTasks=Elasticsearch
+
+baseInfo=基本信息
+datasourceConfig=数据源配置
+selectMysqlInstance=选择mysql实例
+databaseName=数据库名称
+tableName=表名
+primaryKey=主键
+elasticsearchConfig=Elasticsearch配置
+elasticsearchAddresses=Elasticserch地址
+defaultAnalyzer=缺省分析器
+indexAlias=索引别名
+indexSettings=索引设置
+esVersion=Elasticserch版本
+fieldMapping=字段映射
+addField=添加字段
+autoMapping=自动映射
+rebuildSettings=创建/重建索引设置
+enableFullSync=启用全量数据同步
+millisecond=毫秒
+switchAfterFullSync=安全切换索引(重建结束后才启用新索引)
+deleteOldIndex=重建索引后删除旧索引
+saveConfig=保存配置
+rebuildIndex=创建/重建索引
+fullBatchSize=每批大小
+fullBatchInterval=批次间隔
+fullWhere=同步 where 条件
+deleteAll=删除全部
+saveConfigDesc=保存后，数据库和表变化将立即生效，字段修改需要重建索引才会生效
+rebuildDesc= 保存配置、创建新索引、同步数据，结束后将替换旧索引（修改别名映射）。
+
+sourceFieldName=源字段
+sourceType=源字段类型
+targetFieldName=目标字段
+targetType=目标字段类型
+convert=转换函数
+custom=自定义
+repairSettings=数据补偿
+repairData=数据补偿
+repairDataDesc=根据条件重新同步数据
+stopRebuildIndex=取消重建
+stopRepairData=取消数据补偿
+*/}

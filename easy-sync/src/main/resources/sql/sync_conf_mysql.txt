@@ -1,0 +1,36 @@
+CREATE TABLE `${tableName}` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `time_task_id` BIGINT NOT NULL,
+   `mysql_time_task_id` BIGINT NULL,
+  `mysql_databases` VARCHAR(500) NULL,
+    `mysql_tables` VARCHAR(1000) NULL,
+    `mysql_keys` VARCHAR(500) NULL,
+    `mysql_key_sep` VARCHAR(50) NULL,
+
+
+  `index_name1` VARCHAR(255) NULL,
+   `wait_index_name1` VARCHAR(255) NULL,
+    `task_config1` mediumtext NULL,
+     `full_table1` VARCHAR(255) NULL,
+   `full_position1` BIGINT NOT NULL DEFAULT 0,
+   `full_status1` INT NOT NULL DEFAULT 0,
+
+      `index_name2` VARCHAR(255) NULL,
+      `wait_index_name2` VARCHAR(255) NULL,
+       `task_config2` mediumtext NULL,
+        `full_table2` VARCHAR(255) NULL,
+      `full_position2` BIGINT NOT NULL DEFAULT 0,
+      `full_status2` INT NOT NULL DEFAULT 0,
+
+        `repair_task_config` mediumtext NULL,
+        `repair_table` VARCHAR(255) NULL,
+        `repair_position` BIGINT NOT NULL DEFAULT 0,
+         `repair_status` INT NOT NULL DEFAULT 0,
+
+   `create_time` DATETIME NULL,
+     `update_time` DATETIME NULL,
+
+
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `${tableName}_ttid` (`time_task_id`),
+  INDEX `${tableName}_mttid` (`mysql_time_task_id`));
