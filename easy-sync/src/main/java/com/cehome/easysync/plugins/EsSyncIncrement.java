@@ -27,6 +27,7 @@ import org.slf4j.MDC;
 
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class EsSyncIncrement extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(EsSyncIncrement.class);
@@ -43,6 +44,7 @@ public class EsSyncIncrement extends Thread {
     DatabaseService databaseService;
     Properties props = new Properties();
     private volatile boolean running = true;
+    private AtomicLong atomicLong = new AtomicLong();
 
     public EsSyncIncrement(TimeTaskContext context, DatabaseService databaseService, Kafka kafka, String indexName, Jest jest, String taskConfig) throws Exception {
         this.context = context;
@@ -69,13 +71,13 @@ public class EsSyncIncrement extends Thread {
 
     @Override
     public void run() {
-//        props.put("client.id",String.valueOf(context.getId()));
+        props.put("client.id",String.valueOf(context.getId() + atomicLong.incrementAndGet()));
         props.put("bootstrap.servers", kafka.getServers());
         props.put("group.id", "es_" + indexName);
-        props.put("enable.auto.commit", "false");
-        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("fetch.message.max.bytes", "10MB");
+        props.put("enable.auto.commit", kafka.getEnableAutoCommit());
+        props.put("key.deserializer", kafka.getKeyDeserializer());
+        props.put("value.deserializer", kafka.getValueDeserializer());
+        props.put("fetch.message.max.bytes", kafka.getFetchMessageMaxBytes());
         final int minBatchSize = 10;
         MDC.put("shard", "task/"+context.getId());
         while (canRun()) {

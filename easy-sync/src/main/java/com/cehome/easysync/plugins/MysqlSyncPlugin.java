@@ -60,15 +60,15 @@ public class MysqlSyncPlugin extends TimeTaskPlugin {
         Kafka kafka=mysqlConfig.getKafka();
         Properties props = new Properties();
         props.put("bootstrap.servers", kafka.getServers());
-        props.put("acks", "all");
-        props.put("retries", 0);
-        props.put("batch.size", 16384);
-        props.put("linger.ms", 1);
-        props.put("buffer.memory", 33554432);
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("message.max.bytes", "10MB");
-        props.put("replica.fetch.max.bytes", "10MB");
+        props.put("acks", kafka.getAcks());
+        props.put("retries", kafka.getRetries());
+        props.put("batch.size", kafka.getBatchSize());
+        props.put("linger.ms", kafka.getLingerMs());
+        props.put("buffer.memory", kafka.getBufferMemory());
+        props.put("key.serializer", kafka.getKeySerializer());
+        props.put("value.serializer", kafka.getValueSerializer());
+        props.put("message.max.bytes", kafka.getMessageMaxBytes());
+        props.put("replica.fetch.max.bytes", kafka.getReplicaFetchMaxBytes());
 
         Producer producer = new KafkaProducer(kafka.getVersion(),props);
         context.put("producer",producer);

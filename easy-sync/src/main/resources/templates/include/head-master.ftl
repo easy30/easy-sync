@@ -14,13 +14,13 @@
                 <li>
                     <div style="align-content: center">
                         <a href="${ctx}/"><img  src="${ctx}/res/img/logo.png">
-                            <span style="vertical-align: middle;color:#f0ad4e;margin-left:5px;font-size:18px;font-weight:bold">Easy Seach</span>
+                            <span style="vertical-align: middle;color:#f0ad4e;margin-left:5px;font-size:18px;font-weight:bold">Easy Sync</span>
                         </a>
                     </div>
                 </li>
                 <li><a href="${ctx}/timeTask/sourceList.htm" lang-key="mysqlTasks">MySql Tasks</a></li>
                 <li><a href="${ctx}/timeTask/esList.htm" lang-key="elasticsearchTasks">Elasticsearch Tasks</a></li>
-                <li><a href="javascript:alert('Easy Search')" lang-key="about"></a></li>
+                <li><a href="javascript:alert('Easy Sync')" lang-key="about"></a></li>
 
             </ul>
         </div><!--/.nav-collapse -->

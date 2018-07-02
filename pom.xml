@@ -80,9 +80,9 @@
     </developers>
 
     <scm>
-        <connection>git@github.com:cehome-com/easy-search.git</connection>
-        <developerConnection>git@github.com:cehome-com/easy-search.git</developerConnection>
-        <url>https://github.com/cehome-com/easy-search</url>
+        <connection>git@github.com:cehome-com/easy-sync.git</connection>
+        <developerConnection>git@github.com:cehome-com/easy-sync.git</developerConnection>
+        <url>https://github.com/cehome-com/easy-sync</url>
     </scm>
 
     <profiles>

@@ -14,7 +14,7 @@
                 <li>
                     <div style="align-content: center">
                         <a href="${ctx}"><img  src="${ctx}/res/img/logo.png"></a>
-                        <span style="vertical-align: middle;color:#f0ad4e;margin-left:5px;font-size:18px;font-weight:bold">Easy Search</span></div>
+                        <span style="vertical-align: middle;color:#f0ad4e;margin-left:5px;font-size:18px;font-weight:bold">Easy Sync</span></div>
                 </li>
 
             </ul>
