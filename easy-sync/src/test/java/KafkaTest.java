@@ -43,7 +43,7 @@ public class KafkaTest {
     }
 
     @Test
-    public void consumer(){
+    public void consumer()throws Exception{
         Properties props = new Properties();
         props.put("bootstrap.servers", "localhost:9094");
         props.put("group.id", "test");
