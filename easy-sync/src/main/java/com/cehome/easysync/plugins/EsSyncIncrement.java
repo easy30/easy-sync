@@ -62,7 +62,7 @@ public class EsSyncIncrement extends Thread {
         return indexName;
     }*/
 
-    private void createKafkaConsumer() {
+    private void createKafkaConsumer() throws Exception{
         Common.closeObject(consumer);
         consumer = new KafkaConsumer(kafka.getVersion(),props);
         consumer.createKafkaConsumer();
