@@ -2,6 +2,7 @@ package com.cehome.easysync;
 
 import com.cehome.task.annotation.EnableTimeTaskClient;
 import com.cehome.task.annotation.EnableTimeTaskConsole;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootApplication
 @RestController
@@ -26,6 +29,12 @@ import java.io.IOException;
 public class Application {
     @Value("${language:en}")
     String language;
+
+    @Value("${user:}")
+    String user;
+    @Value("${password:}")
+    String password;
+
     private static ApplicationContext applicationContext;
     public static void main(String[] args) {
         applicationContext=  SpringApplication.run(Application.class,args);
@@ -67,6 +76,29 @@ public class Application {
         //registration.setName("MyFilter");
         // registration.setOrder(1);
         return registration;
+    }
+
+
+
+    @Bean
+    public FilterRegistrationBean createAuthFilter() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        HTTPBasicAuthorizeFilter httpBasicFilter = new HTTPBasicAuthorizeFilter();
+        registrationBean.setFilter(httpBasicFilter);
+        List<String> urlPatterns = new ArrayList<String>();
+        user="admin";
+        if(user.length()==0 ){
+            urlPatterns.add("/not_need_filter");
+        }else{
+            httpBasicFilter.setUser(user);
+            httpBasicFilter.setPassword(password);
+            urlPatterns.add("/*");
+        }
+
+
+        registrationBean.setUrlPatterns(urlPatterns);
+        registrationBean.setOrder(200);
+        return registrationBean;
     }
 
 
