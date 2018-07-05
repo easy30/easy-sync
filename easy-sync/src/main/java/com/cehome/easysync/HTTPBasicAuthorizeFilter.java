@@ -36,7 +36,7 @@ public class HTTPBasicAuthorizeFilter implements Filter{
   
     @Override  
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)  
-            throws IOException, ServletException {  
+            throws IOException, ServletException {
         boolean ok = checkHTTPBasicAuthorize(request);
         if (!ok)
         {  
@@ -47,7 +47,7 @@ public class HTTPBasicAuthorizeFilter implements Filter{
             httpResponse.setHeader("Cache-Control", "no-store");
             httpResponse.setDateHeader("Expires", 0);
             httpResponse.setHeader("WWW-authenticate", "Basic Realm=cehome");
-            httpResponse.getWriter().write("没有权限！");
+            httpResponse.getWriter().write("no auth");
             return;  
         }  
         else  
@@ -68,6 +68,11 @@ public class HTTPBasicAuthorizeFilter implements Filter{
         try  
         {  
             HttpServletRequest httpRequest = (HttpServletRequest)request;
+            String path=httpRequest.getServletPath();
+            //ignore
+            if(path.startsWith("/remote") || path.startsWith("/timeTaskClientService")){
+                return true;
+            }
             if(httpRequest.getSession().getAttribute("user")!=null){
                 return true;
             }

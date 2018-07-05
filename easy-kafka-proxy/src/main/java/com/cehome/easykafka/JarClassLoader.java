@@ -13,7 +13,8 @@ import java.util.jar.JarInputStream;
 public class JarClassLoader extends ClassLoader {
 
     private String version;
-    public JarClassLoader(String version){
+    public JarClassLoader(String version,ClassLoader classLoader){
+        super(classLoader);
         this.version=version;
     }
 
@@ -26,6 +27,7 @@ public class JarClassLoader extends ClassLoader {
         //System.out.println("find class: "+name);
         String jar="/kafka/" + version + "/kafka-clients-" + version + ".jar";
         InputStream is = this.getClass().getResourceAsStream(jar);
+        if(is==null) throw new ClassNotFoundException("jar "+jar+" not exists");
         JarInputStream jis= null;
         try {
             String path=name.replace('.','/')+".class";
@@ -40,8 +42,8 @@ public class JarClassLoader extends ClassLoader {
 
                 }
             }
-            //return getSystemClassLoader().loadClass(name);
-            throw new ClassNotFoundException();
+            return getSystemClassLoader().loadClass(name);
+            //throw new ClassNotFoundException();
 
         } catch (IOException e) {
             throw new ClassNotFoundException(e.getMessage());
@@ -50,7 +52,7 @@ public class JarClassLoader extends ClassLoader {
     }
 
     public static void main(String[] args) throws ClassNotFoundException {
-        JarClassLoader jarClassLoader=new JarClassLoader("0.10.1.0");
+        JarClassLoader jarClassLoader=new JarClassLoader("0.10.1.0",null);
        Class c=  jarClassLoader.loadClass( "org.apache.kafka.clients.consumer.KafkaConsumer");
        c=jarClassLoader.loadClass("java.lang.String");
         System.out.println(c.getName());

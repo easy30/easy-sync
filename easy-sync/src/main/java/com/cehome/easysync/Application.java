@@ -30,9 +30,9 @@ public class Application {
     @Value("${language:en}")
     String language;
 
-    @Value("${user:}")
+    @Value("${login.user:}")
     String user;
-    @Value("${password:}")
+    @Value("${login.password:}")
     String password;
 
     private static ApplicationContext applicationContext;
@@ -86,8 +86,8 @@ public class Application {
         HTTPBasicAuthorizeFilter httpBasicFilter = new HTTPBasicAuthorizeFilter();
         registrationBean.setFilter(httpBasicFilter);
         List<String> urlPatterns = new ArrayList<String>();
-        user="admin";
-        if(user.length()==0 ){
+        System.out.println("login.user="+user);
+        if(StringUtils.isBlank(user)){
             urlPatterns.add("/not_need_filter");
         }else{
             httpBasicFilter.setUser(user);

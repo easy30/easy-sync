@@ -28,7 +28,7 @@ public class KafkaConsumer implements Consumer{
         this.version = version;
         this.props = props;
         //standardKafkaClassLoader = new StandardKafkaClassLoader(version);
-        jarClassLoader=new JarClassLoader(version);
+        jarClassLoader=new JarClassLoader(version,KafkaConsumer.class.getClassLoader());
         this.consumerClazz = jarClassLoader.loadClass("org.apache.kafka.clients.consumer.KafkaConsumer");
         this.consumerRecordClazz =jarClassLoader.loadClass("org.apache.kafka.clients.consumer.ConsumerRecord");
     }
@@ -37,8 +37,7 @@ public class KafkaConsumer implements Consumer{
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             // 临时更改 ClassLoader
-            Thread.currentThread().setContextClassLoader(consumerClazz.getClassLoader());
-            //Thread.currentThread().setContextClassLoader(null);
+            //Thread.currentThread().setContextClassLoader(consumerClazz.getClassLoader());
 
             this.consumerConstructor = consumerClazz.getConstructor(Properties.class);
             if (version.startsWith(VersionEnum.KAFKA_VERSION_8.getValue())) {
@@ -46,7 +45,7 @@ public class KafkaConsumer implements Consumer{
             }
             this.consumerInstance = consumerConstructor.newInstance(props);
         }finally {
-            Thread.currentThread().setContextClassLoader(oldClassLoader);
+           // Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
 
 

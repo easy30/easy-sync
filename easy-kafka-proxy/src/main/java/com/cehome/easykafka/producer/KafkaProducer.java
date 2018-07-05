@@ -29,10 +29,10 @@ public class KafkaProducer implements Producer{
         this.version = version;
         this.props = props;
         //standardKafkaClassLoader = new StandardKafkaClassLoader(version);
-        jarClassLoader=new JarClassLoader(version);
+        jarClassLoader=new JarClassLoader(version,KafkaProducer.class.getClassLoader());
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(jarClassLoader);
+            //Thread.currentThread().setContextClassLoader(jarClassLoader);
             this.producerClazz = jarClassLoader.loadClass("org.apache.kafka.clients.producer.KafkaProducer");
             this.recordClazz = jarClassLoader.loadClass("org.apache.kafka.clients.producer.ProducerRecord");
             Constructor pruducerConstructor = producerClazz.getConstructor(Properties.class);
@@ -42,7 +42,7 @@ public class KafkaProducer implements Producer{
             e.printStackTrace();
         }
         finally {
-            Thread.currentThread().setContextClassLoader(oldClassLoader);
+            //Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
 
     }
