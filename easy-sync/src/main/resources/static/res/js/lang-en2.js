@@ -52,4 +52,7 @@ repairDataDesc=resync some records
 stopRebuildIndex=Cancal Rebuild
 stopRepairData=Cancal Repair
 
+producerConfigs=Producer Configs
+consumerConfigs=Consumer Configs
+
 */}

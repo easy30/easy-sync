@@ -56,6 +56,9 @@ public class TableCreator implements InitializingBean,BeanPostProcessor {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        boolean mysql=driverClassName.indexOf("mysql") >= 0;
+        logger.info(mysql?"Use mysql database":"Use h2 database");
+        logger.info("url={}, table={}",url,table);
         if(autoCreateTable) {
             execute();
         }
@@ -159,7 +162,7 @@ public class TableCreator implements InitializingBean,BeanPostProcessor {
                     }
                 }*/
 
-                logger.info("crate end");
+                logger.info("create end");
             }finally {
                 Common.closeObjects(st);
             }

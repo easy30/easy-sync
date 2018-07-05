@@ -127,24 +127,40 @@
                       <td><input type="password" class="form-control input-xs"  v-model="mysql.password"
                                  data-rule-required="true"/></td>
                   </tr>
-                  <tr>
-                      <td lang-key="kafkaServers"></td>
-                      <td><input type="text" class="form-control input-xs"  v-model="kafka.servers"
-                                 data-rule-required="true"/>
-                      e.g. 192.168.0.39:9092
-                      </td>
-                  </tr>
+
                   <tr>
                         <td lang-key="kafkaVersion">kafka version</td>
                         <td>
                            <select class="form-control input-xs"  v-model="kafka.version">
-                               <option value="0.8.2.2">0.8.2.2</option>
                                <option value="0.9.0.1">0.9.0.1</option>
-                               <option value="0.10.1.0" selected>0.10.1.0</option>
+                               <option value="0.10.1.0" >0.10.1.0</option>
+                               <option value="0.11.0.1" selected>0.11.0.1</option>
                            </select>
                         </td>
                     </tr>
-                    <tr>
+                  <tr>
+                      <td lang-key="kafkaServers"></td>
+                      <td><input type="text" class="form-control input-xs"  v-model="kafka.servers"
+                                 data-rule-required="true"/>
+                          e.g. 192.168.0.39:9092
+                      </td>
+                  </tr>
+
+                  <tr>
+                      <td lang-key="producerConfigs"></td>
+                      <td><textarea  cols="60" class="form-control input-xs"  v-model="kafka.producerConfigs"></textarea>
+
+                      </td>
+                  </tr>
+                  <tr>
+                      <td lang-key="consumerConfigs"></td>
+                      <td><textarea cols="60" class="form-control input-xs"  v-model="kafka.consumerConfigs"></textarea>
+
+                      </td>
+                  </tr>
+
+
+                    <#--<tr>
                         <td lang-key="kafkaAcks">kafka acks</td>
                         <td><input type="text" class="form-control input-xs"  v-model="kafka.acks"
                                                                                                                                                  data-rule-required="true"/>
@@ -231,7 +247,7 @@
                                                                                                                                                  data-rule-required="true"/>
                         e.g. 10MB
                         </td>
-                    </tr>
+                    </tr>-->
 
               </table>
 

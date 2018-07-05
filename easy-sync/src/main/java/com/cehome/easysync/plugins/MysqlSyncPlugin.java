@@ -20,6 +20,7 @@ import com.cehome.task.client.TimeTaskPlugin;
 import com.github.shyiko.mysql.binlog.BinaryLogClient;
 import com.github.shyiko.mysql.binlog.event.deserialization.EventDeserializer;
 import jsharp.util.EntityUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.Inet4Address;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
  * --读取基本配置
@@ -60,7 +62,25 @@ public class MysqlSyncPlugin extends TimeTaskPlugin {
         Kafka kafka=mysqlConfig.getKafka();
         Properties props = new Properties();
         props.put("bootstrap.servers", kafka.getServers());
-        props.put("acks", kafka.getAcks());
+        props.put("acks", "all");
+        props.put("retries", 0);
+        props.put("batch.size", 16384);
+        props.put("linger.ms", 1);
+        props.put("buffer.memory", 33554432);
+        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("message.max.bytes", "10MB");
+        props.put("replica.fetch.max.bytes", "10MB");
+        if(StringUtils.isNotBlank(kafka.getProducerConfigs())){
+            String[] lines=kafka.getProducerConfigs().split("[\\r\\n]+");
+            for (String line:lines){
+                line=line.trim();
+                if(line.length()==0) continue;
+                String[] e= line.split("\\s*=\\s*");
+                props.put(e[0],e[1]);
+            }
+        }
+        /*props.put("acks", kafka.getAcks());
         props.put("retries", kafka.getRetries());
         props.put("batch.size", kafka.getBatchSize());
         props.put("linger.ms", kafka.getLingerMs());
@@ -68,7 +88,7 @@ public class MysqlSyncPlugin extends TimeTaskPlugin {
         props.put("key.serializer", kafka.getKeySerializer());
         props.put("value.serializer", kafka.getValueSerializer());
         props.put("message.max.bytes", kafka.getMessageMaxBytes());
-        props.put("replica.fetch.max.bytes", kafka.getReplicaFetchMaxBytes());
+        props.put("replica.fetch.max.bytes", kafka.getReplicaFetchMaxBytes());*/
 
         Producer producer = new KafkaProducer(kafka.getVersion(),props);
         context.put("producer",producer);

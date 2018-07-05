@@ -21,6 +21,7 @@ import io.searchbox.core.Index;
 import jsharp.util.Common;
 import jsharp.util.DataMap;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -45,6 +46,7 @@ public class EsSyncIncrement extends Thread {
     Properties props = new Properties();
     private volatile boolean running = true;
     private AtomicLong atomicLong = new AtomicLong();
+    private static AtomicLong clientId=new AtomicLong(0);
 
     public EsSyncIncrement(TimeTaskContext context, DatabaseService databaseService, Kafka kafka, String indexName, Jest jest, String taskConfig) throws Exception {
         this.context = context;
@@ -63,7 +65,7 @@ public class EsSyncIncrement extends Thread {
     }*/
 
     private void createKafkaConsumer() throws Exception{
-        Common.closeObject(consumer);
+        if(consumer!=null)Common.closeObject(consumer);
         consumer = new KafkaConsumer(kafka.getVersion(),props);
         consumer.createKafkaConsumer();
         consumer.subscribe(Const.TOPIC_PREFIX + context.getId());
@@ -74,10 +76,26 @@ public class EsSyncIncrement extends Thread {
         props.put("client.id",String.valueOf(context.getId() + atomicLong.incrementAndGet()));
         props.put("bootstrap.servers", kafka.getServers());
         props.put("group.id", "es_" + indexName);
+
+        props.put("enable.auto.commit", "false");
+        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put("fetch.message.max.bytes", "10MB");
+        props.put("client.id",""+clientId.incrementAndGet());
+        if(StringUtils.isNotBlank(kafka.getConsumerConfigs())){
+            String[] lines=kafka.getConsumerConfigs().split("[\\r\\n]+");
+            for (String line:lines){
+                line=line.trim();
+                if(line.length()==0) continue;
+                String[] e= line.split("\\s+=\\s+");
+                props.put(e[0],e[1]);
+            }
+        }
+       /* props.put("group.id", "es_" + indexName);
         props.put("enable.auto.commit", kafka.getEnableAutoCommit());
         props.put("key.deserializer", kafka.getKeyDeserializer());
         props.put("value.deserializer", kafka.getValueDeserializer());
-        props.put("fetch.message.max.bytes", kafka.getFetchMessageMaxBytes());
+        props.put("fetch.message.max.bytes", kafka.getFetchMessageMaxBytes());*/
         final int minBatchSize = 10;
         MDC.put("shard", "task/"+context.getId());
         while (canRun()) {

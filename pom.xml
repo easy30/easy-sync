@@ -5,8 +5,8 @@
     <groupId>com.cehome</groupId>
     <artifactId>easy-sync-parent</artifactId>
     <packaging>pom</packaging>
-    <name>task-parent</name>
-    <version>2.0.3</version>
+    <name>easy-sync-parent</name>
+    <version>2.0.5</version>
     <url>https://github.com/cehome-com/easy-sync</url>
     <description>easy sync</description>
     <properties>
@@ -52,12 +52,11 @@
 	<modules>
 	    
         <module>easy-sync</module>
-
-        <module>../easy-task/task</module>
+      <!--  <module>../easy-task/task</module>
         <module>../easy-task/task-console-core</module>
-        <module>../easy-task/task-console-resource</module>
-        <module>../easy-kafka-parent/easy-kafka-common</module>
-        <module>../easy-kafka-parent/easy-kafka-proxy</module>
+        <module>../easy-task/task-console-resource</module>-->
+        <module>easy-kafka-common</module>
+        <module>easy-kafka-proxy</module>
 
 	</modules>
 

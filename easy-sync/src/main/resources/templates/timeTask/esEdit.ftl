@@ -122,7 +122,7 @@
                        popover(sender, $lg("success") + ". "+data,true);
 
                     }  else
-                        popover(sender,"error：" + data);
+                        alert("error：" + data);
                 });
     }
 

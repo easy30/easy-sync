@@ -1,8 +1,8 @@
 {
 
   "0":{
-    "desc":"Data Sync",
-    "categoryNames":["分组"],
+    "desc":"Binlog",
+    "categoryNames":["group"],
     "bean":{
       "fixed":"1",
       "bean":"mysqlSyncPlugin",
@@ -12,8 +12,8 @@
     }
   },
   "1":{
-    "desc":"Data Index",
-    "categoryNames":["分组"],
+    "desc":"Elasticsearch",
+    "categoryNames":["group"],
     "bean":{
       "fixed":"1",
       "bean":"esSyncPlugin",
@@ -24,6 +24,6 @@
   },
   "2":{
     "desc":"task",
-    "categoryNames":["分组"]
+    "categoryNames":["group"]
   }
 }

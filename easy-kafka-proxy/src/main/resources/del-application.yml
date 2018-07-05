@@ -1,0 +1,28 @@
+server:
+  port: 8808
+spring:
+  application:
+    name: easy-kafka-proxy
+
+kafka:
+  producer:
+    bootstrapServers: houstan.com:9094
+    retries: 3
+    batchSize: 16384
+    lingerMs: 1
+#32M
+    bufferMemory: 33554432
+
+  consumer:
+    bootstrapServers: houstan.com:9094
+    groupId: 0
+    enableAutoCommit: false
+    autoCommitIntervalMs: 1000
+    sessionTimeoutMs: 30000
+    maxPollRecords: 100
+#earliest,latest
+    autoOffsetReset: earliest
+
+logging:
+  level:
+    root: debug

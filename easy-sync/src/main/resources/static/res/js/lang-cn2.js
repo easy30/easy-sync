@@ -50,4 +50,6 @@ repairData=数据补偿
 repairDataDesc=根据条件重新同步数据
 stopRebuildIndex=取消重建
 stopRepairData=取消数据补偿
+producerConfigs=生产者配置
+consumerConfigs=消费者配置
 */}
