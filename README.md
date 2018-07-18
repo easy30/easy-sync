@@ -20,7 +20,7 @@ one does not work will block another one. So we send two tables' data to kafka w
 two tables will work independently.
 # Quick start
 - Install jdk(>=1.8),  install kafka(>=0.9.0.1)
-- jar -jar easy-sync.jar
+- jar -jar easy-sync.jar  (download from https://github.com/cehome-com/resource/raw/master/easy-sync/2.0.5/easy-sync.jar)
 - Visit http://localhost:8080
 - Add and start binlog task, add and start elasticsearch task
 
