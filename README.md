@@ -8,8 +8,9 @@ Sync mysql to elasticsearch in real-time via binlog and kafka.
 ![demoͼ](docs/images/main.png)
 
 # How does it work?
-Binlog Task: Read binlog and send different tables' data to different kafka topics.  
-Elasticsearch Task: Each task read own kafka topic and write data to elasticsearch. 
+There two kinds of tasks. 
+Binlog Task- Read binlog and send different tables' data to different kafka topics.  
+Elasticsearch Task- Each task read own kafka topic and write data to elasticsearch. 
 
 ![system](docs/images/system.png)
 
