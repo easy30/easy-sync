@@ -8,9 +8,9 @@ Sync mysql to elasticsearch in real-time via binlog and kafka.
 ![demoͼ](docs/images/main.png)
 
 # How does it work?
-There two kinds of tasks. 
-Binlog Task- Read binlog and send different tables' data to different kafka topics.  
-Elasticsearch Task- Each task read own kafka topic and write data to elasticsearch. 
+There two kinds of tasks.  
+Binlog Task - Read binlog and send different tables' data to different kafka topics.  
+Elasticsearch Task - Each task read own kafka topic and write data to elasticsearch. 
 
 ![system](docs/images/system.png)
 
@@ -22,7 +22,7 @@ two tables will work independently.
 - Install jdk(>=1.8),  install kafka(>=0.9.0.1)
 - jar -jar easy-sync.jar
 - Visit http://localhost:8080
-- Add and start binlog task, add then add and start elasticsearch task
+- Add and start binlog task, add and start elasticsearch task
 
 # Add binlog task
 - Mysql binlog enable config  
@@ -79,14 +79,14 @@ FLUSH PRIVILEGES;
 ![Elasticsearch Config](docs/images/es-edit2.png)
 
 - Field Mapping. Mapping for mysql and elasticsearch fields. Just click "Auto Mapping" button, all fields
-will be listed. Then you can delete or modify some fields.
+will be listed. You can delete or modify some fields.
 
 ![Auto Mapping](docs/images/es-edit3.png)
 
-- Click "Save Config"
-- Click "Rebuild Index". This action will create new elasticsearch index and wait for task to start.
+- Click "Rebuild Index". This step will save config and create new elasticsearch index.
 - Switch to home page, refresh the page. You can see the task created, click "Start" button.
-- Wait a few seconds, click "Log" to see logs.
+- Wait a few seconds, click "Log" to see logs. By default, full sync and increase sync work
+together.
 
 ![es log](docs/images/es-log.png)
 
@@ -97,9 +97,9 @@ will be listed. Then you can delete or modify some fields.
 - kafka versions  
   kafka client can use 0.9.0.1,0.10.1.0,0.11.0.1 three versions. Hight version kafka servers normally 
   support low version clients. So you kafka server must >= 0.9.0.1
-- where does config store in?  
-  By default, config info stores in H2 database in user home such as C:\Users\xxx\easy_sync.  
-  You can create application.properties at the same directory as easy-sync.jar to change it.
+- where does task config store in?  
+  By default, task config stores in H2 database in user home such as C:\Users\xxx\easy_sync.  
+  You can create application.properties in the same directory easy-sync.jar is in to change it.
   Mysql or h2 database is supported.
    ```
   task.datasource.driverClassName=org.h2.Driver
@@ -109,7 +109,7 @@ will be listed. Then you can delete or modify some fields.
   ```  
 - easy-sync cluster supports.  
   You must have more than one computer nodes such as 192.168.0.10 and 192.168.0.11.
-  1.  At each node, create application.properties at the same directory as easy-sync.jar ,
+  1.  At each node, create application.properties in the same directory easy-sync.jar is in ,
   add "cluster name" and "config storage datasource" to file.
   ```
   #cluster name , also is config table_name, default is easy_sync
