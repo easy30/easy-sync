@@ -28,8 +28,10 @@ two tables will work independently.
 - Add and start binlog task, add and start elasticsearch task
 
 # Add binlog task
-- Mysql binlog enable config  
-1. enable binlog
+- Mysql binlog config  
+Before you can read mysql binlog, you have to enable binlog with Row mode,
+ and grant REPLICATION privilege to your mysql user.  
+1. enable mysql binlog.  
 
 ```
 [mysqld]
@@ -132,8 +134,13 @@ together.
   switch back)
   
 -  Languages  
-  English and chinese is supported. Default is english, 
-  Add "language=cn" to application.properties to enable chinese.
+  English(en) and chinese(cn) is supported. Default is english, 
+  Add "**language=cn**" to application.properties to enable chinese.
+
+-  change web port   
+  modify application.properties  
+**server.port=8080** 
+  
   
 
 
