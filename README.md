@@ -8,7 +8,7 @@ Sync mysql to elasticsearch in real-time via binlog and kafka.
 ![demoͼ](docs/images/main.png)
 
 # How does it work?
-There two kinds of tasks.  
+There are two kinds of tasks.  
 Binlog Task - Read binlog and send different tables' data to different kafka topics.  
 Elasticsearch Task - Each task read own kafka topic and write data to elasticsearch. 
 
@@ -61,7 +61,7 @@ FLUSH PRIVILEGES;
 
 ![start](docs/images/binlog-start.png)
 
-- Wait a few seconds, click "Log" button, a new window is opened and you can see some logs.
+- Wait a minute, click "Log" button, a new window is opened and you can see some logs.
   But you have not added any elasticsearch tasks, binlog task will not send any data to kafka.
   You must continue to add elasticsearch task.
   
@@ -90,7 +90,7 @@ will be listed. You can delete or modify some fields.
 
 - Click "Rebuild Index". This step will save config and create new elasticsearch index.
 - Switch to home page, refresh the page. You can see the task created, click "Start" button.
-- Wait a few seconds, click "Log" to see logs. By default, full sync and increase sync work
+- Wait a minute, click "Log" to see logs. By default, full sync and increase sync runs
 together.
 
 ![es log](docs/images/es-log.png)
