@@ -3,7 +3,7 @@ package com.cehome.easysync.plugins;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.cehome.easykafka.Producer;
-import com.cehome.easykafka.producer.KafkaProducer;
+import com.cehome.easykafka.producer.SimpleKafkaProducer;
 import com.cehome.easysync.Application;
 import com.cehome.easysync.domain.Position;
 import com.cehome.easysync.objects.MysqlUrl;
@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
 
 import java.net.Inet4Address;
 import java.util.Properties;
-import java.util.StringTokenizer;
 
 /**
  * --读取基本配置
@@ -63,7 +62,6 @@ public class MysqlSyncPlugin extends TimeTaskPlugin {
         Properties props = new Properties();
         props.put("bootstrap.servers", kafka.getServers());
         props.put("acks", "all");
-        props.put("retries", 0);
         props.put("batch.size", 16384);
         props.put("linger.ms", 1);
         props.put("buffer.memory", 33554432);
@@ -71,6 +69,9 @@ public class MysqlSyncPlugin extends TimeTaskPlugin {
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("message.max.bytes", "10MB");
         props.put("replica.fetch.max.bytes", "10MB");
+        props.put("retries", 0);
+        //default 60s
+        props.put("max.block.ms", "30000");
         if(StringUtils.isNotBlank(kafka.getProducerConfigs())){
             String[] lines=kafka.getProducerConfigs().split("[\\r\\n]+");
             for (String line:lines){
@@ -90,7 +91,7 @@ public class MysqlSyncPlugin extends TimeTaskPlugin {
         props.put("message.max.bytes", kafka.getMessageMaxBytes());
         props.put("replica.fetch.max.bytes", kafka.getReplicaFetchMaxBytes());*/
 
-        Producer producer = new KafkaProducer(kafka.getVersion(),props);
+        Producer producer = new SimpleKafkaProducer(kafka.getVersion(),props);
         context.put("producer",producer);
 
         BinaryLogClient client =null;
@@ -129,16 +130,27 @@ public class MysqlSyncPlugin extends TimeTaskPlugin {
 
 
                 MysqlSyncListener mysqlSyncListener= Application.getBean(MysqlSyncListener.class);
-                mysqlSyncListener.init(producer, client, databaseService,positionSaveService);
+                mysqlSyncListener.init(context,producer, client, databaseService,positionSaveService);
                 client.registerEventListener(mysqlSyncListener);
-                context.put("client", client);
-                client.connect();
-                while (mysqlSyncListener.isRunning()){
-                    context.sleep(5000);
+                synchronized (context) {
+                    if(context.isRunning()) {
+                        context.put("client", client);
+
+                    }
                 }
+                if(context.isRunning()) {
+                    logger.info("begin to connect");
+                    client.connect();
+                    //logger.info("after connect");
+                }
+                while (context.isRunning() && mysqlSyncListener.isRunning()){
+                    context.sleep(5000);
+                    //logger.info("sleep 50000");
+                }
+                logger.info("this turn end");
 
             } catch (Throwable e) {
-                logger.error("",e);
+                logger.error("MysqlSyncPlugin error",e);
             }
             try {
                 client.disconnect();
@@ -169,14 +181,20 @@ public class MysqlSyncPlugin extends TimeTaskPlugin {
 
     @Override
     public void stop(TimeTaskContext context) throws Exception {
-        try {
-            BinaryLogClient client = (BinaryLogClient) context.get("client");
-            client.disconnect();
-        }catch (Exception e){
-            logger.error("client disconnect error",e);
+        synchronized (context) {
+            try {
+                BinaryLogClient client = (BinaryLogClient) context.get("client");
+                client.disconnect();
+            } catch (Exception e) {
+                logger.error("BinaryLogClient disconnect error", e);
+            }
         }
-        Producer producer=(Producer)context.get("producer");
-        producer.close();
+        try{
+            Producer producer=(Producer)context.get("producer");
+            producer.close();
+        } catch (Exception e) {
+            logger.error("producer disconnect error", e);
+        }
 
         logger.info("task "+context.getName()+" is stopped ");
     }

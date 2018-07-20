@@ -2,7 +2,7 @@
 
 Sync mysql to elasticsearch in real-time via binlog and kafka. 
 - Easy to use.
-- Support multi sync tasks without restart.
+- Support multi tasks and add new task without restart.
 - Change index structure smoothly without affecting online business.
 
 ![demoͼ](docs/images/main.png)
@@ -108,7 +108,7 @@ together.
   Mysql or h2 database is supported.
    ```
   task.datasource.driverClassName=org.h2.Driver
-  task.datasource.url=jdbc:h2:tcp://localhost:9092/~/easy_sync;MODE=MYSQL
+  task.datasource.url=jdbc:h2:tcp://localhost:9000/~/easy_sync;MODE=MYSQL
   task.datasource.username=sa
   task.datasource.password=
   ```  
@@ -140,6 +140,8 @@ together.
 -  change web port   
   modify application.properties  
 **server.port=8080** 
+
+- about index sync 
   
   
 

@@ -11,6 +11,7 @@ import com.cehome.easysync.service.PositionSaveService;
 import com.cehome.easysync.service.TableTasksMapService;
 import com.cehome.easysync.utils.Const;
 import com.cehome.easysync.utils.MysqlTypeUtils;
+import com.cehome.task.client.TimeTaskContext;
 import com.github.shyiko.mysql.binlog.BinaryLogClient;
 import com.github.shyiko.mysql.binlog.event.*;
 import jsharp.util.TimeCal;
@@ -39,25 +40,29 @@ public class MysqlSyncListener implements BinaryLogClient.EventListener {
     DatabaseService databaseService;
     private long timezoneInMS;
     Producer producer;
-    TimeCal timeCal1=new TimeCal(5);
-    TimeCal timeCal2=new TimeCal(30);
-    private volatile boolean running=true;
+    TimeTaskContext context;
+    TimeCal timeCal1 = new TimeCal(5);
+    TimeCal timeCal2 = new TimeCal(30);
+    private volatile boolean running = true;
 
 
     @Autowired
     TableTasksMapService tableTasksMapService;
 
 
-    private  PositionSaveService positionSaveService;
-    public MysqlSyncListener(){
+    private PositionSaveService positionSaveService;
+
+    public MysqlSyncListener() {
 
     }
-    public void init(Producer producer, BinaryLogClient client, DatabaseService databaseService, PositionSaveService positionSaveService) {
+
+    public void init(TimeTaskContext context, Producer producer, BinaryLogClient client, DatabaseService databaseService, PositionSaveService positionSaveService) {
+        this.context = context;
         this.producer = producer;
         this.client = client;
         this.databaseService = databaseService;
-        this.positionSaveService=positionSaveService;
-        this.timezoneInMS=databaseService.getTimezoneHours()*3600*1000;
+        this.positionSaveService = positionSaveService;
+        this.timezoneInMS = databaseService.getTimezoneHours() * 3600 * 1000;
 
        /* position=positionService.getPosition(databaseService.getTimeTaskId(),databaseService.getServerId());
         if(position==null) {
@@ -82,14 +87,24 @@ public class MysqlSyncListener implements BinaryLogClient.EventListener {
         try {
             doOnEvent(event);
         } catch (Throwable e) {
-            logger.error("",e);
+            //logger.error("event error", e);
             setRunning(false);
-            try {
-                //disconnect in order to  restart with last postion, then will not lose any event.
-                client.disconnect();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            // in order to jump out BinlogClient loop and end
+            throw new Error(e);
+               /* new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            //disconnect in order to  restart with last postion, then will not lose any event.
+                        client.disconnect();
+                        logger.info("disconnect ok");
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }).start();
+*/
+
 
         }
     }
@@ -99,7 +114,7 @@ public class MysqlSyncListener implements BinaryLogClient.EventListener {
         logger.debug("" + event);
 
 
-        TimeCal timeCal=timeCal2;
+        TimeCal timeCal = timeCal2;
         EventType eventType = event.getHeader().getEventType();
         if (eventType == EventType.GTID) {
             String gtid = ((GtidEventData) event.getData()).getGtid();
@@ -109,8 +124,8 @@ public class MysqlSyncListener implements BinaryLogClient.EventListener {
             database = data.getDatabase();
             table = data.getTable();
             tableId = data.getTableId();
-            Map<String, List<TableTask>> tableTasksMap=tableTasksMapService.get(databaseService);
-            tableTasks = tableTasksMap.get(database+"."+table);
+            Map<String, List<TableTask>> tableTasksMap = tableTasksMapService.get(databaseService);
+            tableTasks = tableTasksMap.get(database + "." + table);
 
         } else if (CollectionUtils.isNotEmpty(tableTasks)) {
             ArrayList<Row> list = new ArrayList<>();
@@ -139,34 +154,65 @@ public class MysqlSyncListener implements BinaryLogClient.EventListener {
 
 
             //todo: 事务性
-            for (TableTask  tableTask : tableTasks) {
+            for (TableTask tableTask : tableTasks) {
 
                 for (Row row : list) {
-                    logger.info("[binlog] task={}, {}", tableTask.getTimeTaskId(), JSON.toJSONString(row));
-                    String id= row.getData().getStr(tableTask.getKeys());
-                   producer.send(Const.TOPIC_PREFIX + tableTask.getTimeTaskId(),id, JSON.toJSONString(row));
+
+                    String id = row.getData().getStr(tableTask.getKeys());
+                    try {
+                        send(Const.TOPIC_PREFIX + tableTask.getTimeTaskId(), id, JSON.toJSONString(row));
+                        logger.info("[binlog] success task={}, {}", tableTask.getTimeTaskId(), JSON.toJSONString(row));
+                    } catch (Exception e) {
+                        logger.error("[binlog] fail task={}, {}", tableTask.getTimeTaskId(), JSON.toJSONString(row));
+                        throw e;
+                    }
                     //logger
 
                 }
 
             }
 
-            timeCal=timeCal1;
-
-
-
+            timeCal = timeCal1;
 
 
         }
 
 
-        positionSaveService.set(client.getBinlogFilename(),client.getBinlogPosition(),client.getGtidSet());
-        if(timeCal.isTimeUp()>0) {
+        positionSaveService.set(client.getBinlogFilename(), client.getBinlogPosition(), client.getGtidSet());
+        if (timeCal.isTimeUp() > 0) {
             positionSaveService.save();
         }
 
 
     }
+
+
+    private void send(String topic, String key, String value) throws Exception {
+        final int count = 20;
+        for (int i = 0; i < count; i++) {
+            if (!context.isRunning()) {
+                throw new RuntimeException("Task is stopped, send end.");
+            }
+            try {
+                producer.send(topic, key, value);
+            } catch (Exception e) {
+                if (i == count - 1) {
+                    logger.error("try {} times and exit", count);
+                    throw e;
+                } else {
+                    if (i == 0) {
+                        logger.error("send error", e);
+                    } else {
+                        logger.error("send error: {}", e.getMessage());
+                    }
+                    context.sleep(5000);
+                }
+
+            }
+        }
+
+    }
+
 
     private Row buildRow(String type, Serializable[] rowData, BitSet includedColumns) throws Exception {
         Row row = new Row();
@@ -209,18 +255,16 @@ public class MysqlSyncListener implements BinaryLogClient.EventListener {
                 byte[] bs = (byte[]) object;
                 return column.getCharset() == null ? new String(bs) : new String(bs, column.getCharset());
             }
-        }else if(object instanceof Long){
+        } else if (object instanceof Long) {
             String dataType = column.getDataType();
             if (MysqlTypeUtils.isDateNormal(dataType)) {
-                return  ((Long)object) - timezoneInMS;
+                return ((Long) object) - timezoneInMS;
             }
         }
 
         return object;
 
     }
-
-
 
 
 }

@@ -2,7 +2,6 @@ package com.cehome.easykafka.consumer;
 
 import com.cehome.easykafka.Consumer;
 import com.cehome.easykafka.JarClassLoader;
-import com.cehome.easykafka.StandardKafkaClassLoader;
 import com.cehome.easykafka.enums.VersionEnum;
 
 import java.lang.reflect.Constructor;
@@ -12,7 +11,7 @@ import java.util.*;
 /**
  * Created by houyanlin on 2018/06/22
  **/
-public class KafkaConsumer implements Consumer{
+public class SimpleKafkaConsumer implements Consumer{
 
     private String version;
     private Properties props;
@@ -24,11 +23,11 @@ public class KafkaConsumer implements Consumer{
     private Class<?> consumerRecordClazz;
 
 
-    public KafkaConsumer(String version, Properties props) throws Exception {
+    public SimpleKafkaConsumer(String version, Properties props) throws Exception {
         this.version = version;
         this.props = props;
         //standardKafkaClassLoader = new StandardKafkaClassLoader(version);
-        jarClassLoader=new JarClassLoader(version,KafkaConsumer.class.getClassLoader());
+        jarClassLoader=new JarClassLoader(version,SimpleKafkaConsumer.class.getClassLoader());
         this.consumerClazz = jarClassLoader.loadClass("org.apache.kafka.clients.consumer.KafkaConsumer");
         this.consumerRecordClazz =jarClassLoader.loadClass("org.apache.kafka.clients.consumer.ConsumerRecord");
     }
@@ -88,7 +87,7 @@ public class KafkaConsumer implements Consumer{
                 }
             }
         }catch (Exception e){
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return list;
     }

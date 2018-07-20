@@ -2,17 +2,16 @@ package com.cehome.easykafka.producer;
 
 import com.cehome.easykafka.JarClassLoader;
 import com.cehome.easykafka.Producer;
-import com.cehome.easykafka.StandardKafkaClassLoader;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Properties;
+import java.util.concurrent.Future;
 
 /**
  * Created by houyanlin on 2018/06/22
  **/
-public class KafkaProducer implements Producer{
+public class SimpleKafkaProducer implements Producer{
 
     private String version;
     private Properties props;
@@ -25,12 +24,12 @@ public class KafkaProducer implements Producer{
 
 
 
-    public KafkaProducer(String version, Properties props){
+    public SimpleKafkaProducer(String version, Properties props){
         this.version = version;
         this.props = props;
         //standardKafkaClassLoader = new StandardKafkaClassLoader(version);
-        jarClassLoader=new JarClassLoader(version,KafkaProducer.class.getClassLoader());
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        jarClassLoader=new JarClassLoader(version,SimpleKafkaProducer.class.getClassLoader());
+        //ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             //Thread.currentThread().setContextClassLoader(jarClassLoader);
             this.producerClazz = jarClassLoader.loadClass("org.apache.kafka.clients.producer.KafkaProducer");
@@ -40,6 +39,7 @@ public class KafkaProducer implements Producer{
             this.recordConstructor = recordClazz.getConstructor(String.class,Object.class,Object.class);
         }catch (Exception e){
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
         finally {
             //Thread.currentThread().setContextClassLoader(oldClassLoader);
@@ -50,8 +50,8 @@ public class KafkaProducer implements Producer{
     public Object send(String topic, String key, String value) throws Exception{
         Object recordInstance = recordConstructor.newInstance(topic,key,value);
         Method method = producerClazz.getMethod("send", recordClazz);
-        method.invoke(producerInstance,recordInstance);
-        return value;
+        Future future= (Future)method.invoke(producerInstance,recordInstance);
+        return future.get();
     }
 
     @Override

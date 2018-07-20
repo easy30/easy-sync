@@ -1,27 +1,30 @@
 package com.cehome.easykafka;
 
-import com.cehome.easykafka.producer.KafkaProducer;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import com.cehome.easykafka.producer.SimpleKafkaProducer;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Properties;
+import java.util.Random;
 
 /**
  * Created by houyanlin on 2018/06/26
  **/
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = App.class)
 public class KafkaProducerTest {
     Logger logger = LoggerFactory.getLogger(KafkaProducerTest.class);
+    static {
+        ( (LoggerContext) LoggerFactory.getILoggerFactory()).getLogger("ROOT").setLevel(Level.INFO);
+    }
 
     @Test
     public void sendTest() throws Exception{
+        String version="0.11.0.1";
+        //version="0.9.0.1";
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9094");
+        props.put("bootstrap.servers", "localhost:9092");
         props.put("acks", "all");
         props.put("retries", "3");
         props.put("batch.size", "16384");
@@ -31,9 +34,16 @@ public class KafkaProducerTest {
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("message.max.bytes", "10MB");
         props.put("replica.fetch.max.bytes", "10MBB");
-        KafkaProducer kafkaProducer = new KafkaProducer("0.10.1.0",props);
-        kafkaProducer.send("test3","7","data5");
-        logger.info("send success");
+        props.put("max.block.ms", "15000");
+        Thread.currentThread().setContextClassLoader(null);
+        SimpleKafkaProducer kafkaProducer = new SimpleKafkaProducer(version,props);
+        while(true) {
+            System.out.println("result=" + kafkaProducer.send("test3", "7", "data"+new Random().nextInt(100)).getClass());
+            Thread.sleep(new Random().nextInt(5000));
+        }
+        //logger.info("send success");
+
+
     }
 
 

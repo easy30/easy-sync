@@ -1,8 +1,8 @@
 import com.cehome.easykafka.Consumer;
 import com.cehome.easykafka.Producer;
 import com.cehome.easykafka.consumer.ConsumerRecord;
-import com.cehome.easykafka.consumer.KafkaConsumer;
-import com.cehome.easykafka.producer.KafkaProducer;
+import com.cehome.easykafka.consumer.SimpleKafkaConsumer;
+import com.cehome.easykafka.producer.SimpleKafkaProducer;
 import org.junit.Test;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class KafkaTest {
         props.put("message.max.bytes", "10MB");
         props.put("replica.fetch.max.bytes", "10MBB");
 
-        Producer producer = new KafkaProducer("0.10.1.0",props);
+        Producer producer = new SimpleKafkaProducer("0.10.1.0",props);
         for (int i = 100; i < 110; i++)
             System.out.println(
                     producer.send("my-topic", Integer.toString(i), Integer.toString(i))
@@ -51,7 +51,7 @@ public class KafkaTest {
         props.put("auto.commit.interval.ms", "1000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        Consumer consumer = new KafkaConsumer("0.10.1.0",props);
+        Consumer consumer = new SimpleKafkaConsumer("0.10.1.0",props);
         consumer.createKafkaConsumer();
         consumer.subscribe("my-topic");
         while (true) {

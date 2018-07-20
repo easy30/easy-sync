@@ -3,7 +3,7 @@ package com.cehome.easysync.plugins;
 import com.alibaba.fastjson.JSON;
 import com.cehome.easykafka.Consumer;
 import com.cehome.easykafka.consumer.ConsumerRecord;
-import com.cehome.easykafka.consumer.KafkaConsumer;
+import com.cehome.easykafka.consumer.SimpleKafkaConsumer;
 import com.cehome.easysync.jest.Jest;
 import com.cehome.easysync.objects.Column;
 import com.cehome.easysync.objects.Row;
@@ -66,7 +66,7 @@ public class EsSyncIncrement extends Thread {
 
     private void createKafkaConsumer() throws Exception{
         if(consumer!=null)Common.closeObject(consumer);
-        consumer = new KafkaConsumer(kafka.getVersion(),props);
+        consumer = new SimpleKafkaConsumer(kafka.getVersion(),props);
         consumer.createKafkaConsumer();
         consumer.subscribe(Const.TOPIC_PREFIX + context.getId());
     }
@@ -81,6 +81,17 @@ public class EsSyncIncrement extends Thread {
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("fetch.message.max.bytes", "10MB");
+        /*solution for Caused by: org.apache.kafka.clients.consumer.CommitFailedException: Commit cannot be completed since the group has already rebalanced and assigned the partitions to another member. This means that the time between subsequent calls to poll() was longer than the configured max.poll.interval.ms, which typically implies that the poll loop is spending too much time message processing. You can address this either by increasing the session timeout or by reducing the maximum size of batches returned in poll() with max.poll.records.*/
+        props.put("session.timeout.ms", "30000");
+
+        //kafka在0.9版本无max.poll.records参数，默认拉取记录是500，直到0.10版本才引入该参数
+        props.put("max.poll.records", "10");
+
+        //消息发送的最长等待时间.需大于session.timeout.ms这个时间
+        props.put("request.timeout.ms", "40000");
+
+
+
         props.put("client.id",""+clientId.incrementAndGet());
         if(StringUtils.isNotBlank(kafka.getConsumerConfigs())){
             String[] lines=kafka.getConsumerConfigs().split("[\\r\\n]+");
