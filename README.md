@@ -62,8 +62,8 @@ FLUSH PRIVILEGES;
 ![start](docs/images/binlog-start.png)
 
 - Wait a minute, click "Log" button, a new window is opened and you can see some logs.
-  But you have not added any elasticsearch tasks, binlog task will not send any data to kafka.
-  You must continue to add elasticsearch task.
+  Because none of elasticsearch task has been added, binlog task will not send any data to kafka.
+  You must continue to add an elasticsearch task.
   
 ![log](docs/images/binlog-log.png)
 

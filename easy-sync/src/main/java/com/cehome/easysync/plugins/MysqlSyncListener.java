@@ -195,6 +195,7 @@ public class MysqlSyncListener implements BinaryLogClient.EventListener {
             }
             try {
                 producer.send(topic, key, value);
+                return;
             } catch (Exception e) {
                 if (i == count - 1) {
                     logger.error("try {} times and exit", count);
